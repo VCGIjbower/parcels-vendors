@@ -31,32 +31,114 @@
 
 <!-- parcels joined to rpcs and selected year 1 project information -->
 <script type="text/javascript" src="parcels-rpcs.js"></script>
-
+<script type="text/javascript" src="rpcs.js"></script>
 <script>
 
 var mymap = L.map('map').setView([43.9, -72.5], 8);
-
-var basemap = L.esri.basemapLayer('Gray').addTo(mymap);
+var basemap = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(mymap);
 
 function style(feature) {
     return {
-        fillColor: '#02b875',
+        fillColor: getColor(feature.properties.RPC2),
         weight: 1,
         opacity: 0.7,  
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.7
+    };
+}
+
+function getColor(x) {
+  return  x === "CC" ? '#fff7ec':
+          x === "SW" ? '#fee8c8':
+          x === "BC" ? '#7f0000':
+          x === "NW" ? '#fdd49e':
+          x === "LC" ? '#b30000':
+          x === "NV" ? '#d7301f':
+          x === "WR" ? '#fc8d59':
+          x === "CV" ? '#fdbb84':
+          x === "TR" ? '#ef6548':
+          x === "RR" ? '#d7301f':
+                       '#b30000';
+};
+
+function otherstyle(feature) {
+    return {
+        fillColor: '#000000',
+        weight: 1,
+        opacity: 0.7,
         color: 'white',
         dashArray: '',
         fillOpacity: 0.6
     };
 }
 
-var geo = L.geoJson(parcels_rpcs, {
-    style: style,
+function rpcstyle(feature) {
+    return {
+        weight: 4,
+        opacity: 0.7,
+        color: 'white',
+        fillOpacity: 0.0
+    };
+}
+
+function popupstyle(feature) {
+    return {
+        weight: 0,
+        fillOpacity: 0.0
+    };
+}
+
+var otherparcels = L.geoJson(parcels_rpcs, {
+    filter: otherFilter,
+    style: otherstyle
+}).addTo(mymap);
+
+var parcels = L.geoJson(parcels_rpcs, {
+    filter: parcelsFilter,
+    style: style
+}).addTo(mymap);
+
+var rpcs = L.geoJson(rpcs, {
+    style: rpcstyle
+}).addTo(mymap);
+
+function rpcfunction(x){
+      return x === "CC" ? 'Chittenden County RPC':
+                 x === "SW" ? 'Southern Windsor County RPC':
+                 x === "BC" ? 'Bennington County RC':
+                 x === "NW" ? 'Central Vermont RPC':
+                 x === "LC" ? 'Chittenden County RPC':
+                 x === "NV" ? 'Northeastern Vermont Dev. Assc.':
+                 x === "WR" ? 'Windham RC':
+                 x === "CV" ? 'Central Vermont RPC':
+                 x === "TR" ? 'Two Rivers-Ottauquechee RC':
+                 x === "RR" ? 'Rutland RPC':
+                              'other';
+};
+
+var parcelspopups = L.geoJson(parcels_rpcs, {
+    style: popupstyle,
     onEachFeature: function(feature, layer) {
-    	  layer.bindPopup('<b>Community name: </b>'+feature.properties.commcode_8+'<br/><b>County: </b>'+feature.properties.commcod_14+'<br/><b>RPC: </b>'+feature.properties.commcode_6+'<br/><b>Geographic ID: </b>'+feature.properties.commcod_11)
+      if (feature.properties.Participat === "First Year")
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Year 1 Town')
+      else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not Currently Participating')
     }
 }).addTo(mymap);
 
-</script>
+function parcelsFilter(feature) {
+  if (feature.properties.Participat === "First Year") return true
+}
 
+function otherFilter(feature) {
+  if (feature.properties.Participat === "First Year") return false
+    else return true
+}
+
+</script>
 </body>
 </html>
