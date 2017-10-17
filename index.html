@@ -4,23 +4,15 @@
   <meta charset=utf-8 />
   <title>year 1 towns</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
-   <!-- leaflet -->
-   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
-   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
-   crossorigin=""/>
-
+   <link rel="stylesheet" type="text/css" href="css/parcels-rpcs.css">
    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin=""></script>
-
-   <!-- esri -->
    <script src="https://unpkg.com/esri-leaflet@2.1.1/dist/esri-leaflet.js"
    integrity="sha512-ECQqaYZke9cSdqlFG08zSkudgrdF6I1d8ViSa7I3VIszJyVqw4ng1G8sehEXlumdMnFYfzY0tMgdQa4WCs9IUw=="
    crossorigin=""></script>
    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-
-  <style>
+   <style>
     body { margin:0; padding:0; }
     #map { position: absolute; top:0; bottom:0; right:0; left:0; }
   </style>
@@ -35,10 +27,9 @@
 <script>
 
 var mymap = L.map('map').setView([43.9, -72.5], 8);
-var basemap = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
+var basemap = L.esri.tiledMapLayer({
+  url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer',
+  maxZoom: 15
 }).addTo(mymap);
 
 function style(feature) {
@@ -53,17 +44,18 @@ function style(feature) {
 }
 
 function getColor(x) {
-  return  x === "CC" ? '#fff7ec':
-          x === "SW" ? '#fee8c8':
-          x === "BC" ? '#7f0000':
-          x === "NW" ? '#fdd49e':
-          x === "LC" ? '#b30000':
-          x === "NV" ? '#d7301f':
-          x === "WR" ? '#fc8d59':
-          x === "CV" ? '#fdbb84':
-          x === "TR" ? '#ef6548':
-          x === "RR" ? '#d7301f':
-                       '#b30000';
+  return  x === "CC" ? '#01665e':
+          x === "SW" ? '#35978f':
+          x === "BC" ? '#542788':
+          x === "NW" ? '#c7eae5':
+          x === "LC" ? '#80cdc1':
+          x === "NV" ? '#4393c3':
+          x === "WR" ? '#b2abd2':
+          x === "CV" ? '#8073ac':
+          x === "TR" ? '#92c5de':
+          x === "RR" ? '#2166ac':
+          x === "AC" ? '#d8daeb':
+                       '#4393c3';
 };
 
 function otherstyle(feature) {
@@ -111,8 +103,8 @@ function rpcfunction(x){
       return x === "CC" ? 'Chittenden County RPC':
                  x === "SW" ? 'Southern Windsor County RPC':
                  x === "BC" ? 'Bennington County RC':
-                 x === "NW" ? 'Central Vermont RPC':
-                 x === "LC" ? 'Chittenden County RPC':
+                 x === "NW" ? 'Northwest RPC':
+                 x === "LC" ? 'Lamoille County RPC':
                  x === "NV" ? 'Northeastern Vermont Dev. Assc.':
                  x === "WR" ? 'Windham RC':
                  x === "CV" ? 'Central Vermont RPC':
@@ -126,10 +118,43 @@ var parcelspopups = L.geoJson(parcels_rpcs, {
     style: popupstyle,
     onEachFeature: function(feature, layer) {
       if (feature.properties.Participat === "First Year")
-        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Year 1 Town')
-      else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not Currently Participating')
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Year 1 town')
+      else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not currently participating')
     }
 }).addTo(mymap);
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ["CC", "SW", "BC", "NW", "LC", "NV", "WR", "CV", "TR", "RR", "AC"],
+        labels = ["Chittenden County RPC", "Southern Windsor County RPC", "Bennington County RC", "Northwest RPC", "Lamoille County RPC","Northeastern Vermont Dev. Assc.", "Windham RC", "Central Vermont RPC", "Two Rivers-Ottauquechee RC", "Rutland RPC", "Addison County RPC"];
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+            labels[i] + '<br>';
+    }
+
+    return div;
+
+};
+
+legend.addTo(mymap);
+
+var title = L.control({position: 'topright'});
+
+title.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info title');
+
+    div.innerHTML = '<strong> PARCEL PROJECT PARTICIPATION - YEAR 1 TOWNS </strong>';
+
+	return div;
+
+};
+
+title.addTo(mymap);
 
 function parcelsFilter(feature) {
   if (feature.properties.Participat === "First Year") return true
