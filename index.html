@@ -21,7 +21,7 @@
 
 <div id="map"></div>
 
-<!-- parcels joined to rpcs and selected year 1 project information -->
+<!-- parcels joined to rpcs and selected phase 1 project information -->
 <script type="text/javascript" src="parcels-rpcs.js"></script>
 <script type="text/javascript" src="rpcs.js"></script>
 <script>
@@ -123,7 +123,7 @@ var parcelspopups = L.geoJson(parcels_rpcs, {
     style: popupstyle,
     onEachFeature: function(feature, layer) {
       if (feature.properties.Participat === "First Year")
-        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Year 1')
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Phase 1')
       else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not currently participating')
     }
 }).addTo(mymap);
@@ -153,7 +153,7 @@ title.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info title');
 
-    div.innerHTML = '<strong> <a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff;">PARCEL PROJECT</a> PARTICIPATION<br><br> YEAR 1 MUNICIPALITIES</strong>';
+    div.innerHTML = '<strong> <a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff;">PARCEL PROJECT</a> PARTICIPATION<br><br>PHASE 1 MUNICIPALITIES</strong>';
 
 	return div;
 
