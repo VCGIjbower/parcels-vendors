@@ -31,7 +31,7 @@ window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) 
   params[key] = value;
 });
 
-var mymap = L.map('map').setView([43.9, -72.5], params.zoom || 8);
+var mymap = L.map('map').setView([params.lat || 43.9, params.lng || -72.5], params.zoom || 8);
 var basemap = L.esri.tiledMapLayer({
   url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer',
   maxZoom: 15
