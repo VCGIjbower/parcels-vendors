@@ -4,7 +4,7 @@
   <meta charset=utf-8 />
   <title>Year 1 Municipalities</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-   <link rel="stylesheet" type="text/css" href="css/parcels-rpcs.css">
+   <link rel="stylesheet" type="text/css" href="css/parcels-towns.css">
    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin=""></script>
@@ -22,7 +22,7 @@
 <div id="map"></div>
 
 <!-- parcels joined to rpcs and selected phase 1 project information -->
-<script type="text/javascript" src="parcels-rpcs.js"></script>
+<script type="text/javascript" src="parcels-towns.js"></script>
 <script type="text/javascript" src="rpcs.js"></script>
 <script>
 
@@ -36,7 +36,7 @@ var basemap = L.esri.basemapLayer("DarkGray").addTo(mymap);
 
 function style(feature) {
     return {
-        fillColor: getColor(feature.properties.RPC2),
+        fillColor: getColor(feature.properties.parcelproject_coverage_Vendor),
         weight: 1,
         opacity: 0.7,  
         color: 'white',
@@ -46,17 +46,14 @@ function style(feature) {
 }
 
 function getColor(x) {
-  return  x === "CC" ? '#01665e':
-          x === "SW" ? '#35978f':
-          x === "BC" ? '#542788':
-          x === "NW" ? '#c7eae5':
-          x === "LC" ? '#80cdc1':
-          x === "NV" ? '#4393c3':
-          x === "WR" ? '#b2abd2':
-          x === "CV" ? '#8073ac':
-          x === "TR" ? '#92c5de':
-          x === "RR" ? '#2166ac':
-          x === "AC" ? '#d8daeb':
+  return  x === "NEMRC" ? '#d95f02':
+          x === "CAI" ? '#386cb0':
+          x === "CTI" ? '#1b9e77':
+          x === "VHB" ? '#e41a1c':
+          x === "SGC" ? '#7570b3':
+          x === "Russell Graphics" ? '#e6ab02':
+          x === "Sebago" ? '#666666':
+          x === "Atlas" ? '#66a61e':
                        '#4393c3';
 };
 
@@ -120,7 +117,7 @@ var parcelspopups = L.geoJson(parcels_rpcs, {
     style: popupstyle,
     onEachFeature: function(feature, layer) {
       if (feature.properties.Participat === "First Year")
-        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Phase 1')
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Phase 1 Vendor: </b>'+feature.properties.parcelproject_coverage_Vendor+'<br/><b>Status: </b>Phase 1')
       else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not currently participating')
     }
 }).addTo(mymap);
@@ -130,12 +127,11 @@ var legend = L.control({position: 'bottomright'});
 legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info legend'),
-        grades = ["CC", "SW", "BC", "NW", "LC", "NV", "WR", "CV", "TR", "RR", "AC"],
-        labels = ["Chittenden County RPC", "Southern Windsor County RPC", "Bennington County RC", "Northwest RPC", "Lamoille County RPC","Northeastern Vermont Dev. Assc.", "Windham RC", "Central Vermont RPC", "Two Rivers-Ottauquechee RC", "Rutland RPC", "Addison County RPC"];
+        grades = ["NEMRC", "CAI", "CTI", "VHB", "SGC", "Russell Graphics", "Sebago", "Atlas"];
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' + getColor(grades[i]) + '"></i> ' +
-            labels[i] + '<br>';
+            grades[i] + '<br>';
     }
 
     return div;
