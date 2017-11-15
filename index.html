@@ -5,6 +5,7 @@
   <title>Year 1 Municipalities</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
    <link rel="stylesheet" type="text/css" href="css/parcels-towns.css">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin=""></script>
@@ -46,14 +47,14 @@ function style(feature) {
 }
 
 function getColor(x) {
-  return  x === "NEMRC" ? '#d95f02':
-          x === "CAI" ? '#386cb0':
-          x === "CTI" ? '#1b9e77':
-          x === "VHB" ? '#e41a1c':
-          x === "SGC" ? '#7570b3':
-          x === "Russell Graphics" ? '#e6ab02':
-          x === "Sebago" ? '#666666':
-          x === "Atlas" ? '#66a61e':
+  return  x === "NEMRC" ? '#003366':
+          x === "CAI" ? '#990000':
+          x === "CTI" ? '#006633':
+          x === "VHB" ? '#330066':
+          x === "SGC" ? '#009999':
+          x === "Russell Graphics" ? '#660066':
+          x === "Sebago" ? '#b4b400':
+          x === "Atlas" ? '#663333':
                        '#4393c3';
 };
 
@@ -146,7 +147,7 @@ title.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info title');
 
-    div.innerHTML = '<strong> <a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff;">PARCEL PROJECT</a> PARTICIPATION<br><br>PHASE 1 MUNICIPALITIES</strong>';
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff">parcel project</a></strong> vendors';
 
 	return div;
 

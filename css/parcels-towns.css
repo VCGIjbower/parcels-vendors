@@ -257,7 +257,8 @@
 
 /* general typography */
 .leaflet-container {
-	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-family: "Open Sans", sans-serif;
+	font-size: 12px;
 	}
 
 
