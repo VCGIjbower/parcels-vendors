@@ -128,7 +128,7 @@ legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info legend'),
         grades = ["NEMRC", "CAI", "CTI", "VHB", "SGC", "Russell Graphics", "Sebago", "Atlas"];
-    div.innerHTML = '<span style="font-size: 150%">Vendors</span><br><br>'
+    div.innerHTML = '<span style="font-size: 150%">Vendor</span><br><br>'
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' + getColor(grades[i]) + '"></i> ' +
