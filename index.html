@@ -33,7 +33,6 @@ window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) 
 });
 
 var mymap = L.map('map').setView([params.lat || 43.9, params.lng || -72.5], params.zoom || 8);
-var basemap = L.esri.basemapLayer("DarkGray").addTo(mymap);
 
 function style(feature) {
     return {
@@ -47,14 +46,14 @@ function style(feature) {
 }
 
 function getColor(x) {
-  return  x === "NEMRC" ? '#003366':
-          x === "CAI" ? '#990000':
-          x === "CTI" ? '#006633':
-          x === "VHB" ? '#330066':
-          x === "SGC" ? '#009999':
-          x === "Russell Graphics" ? '#660066':
-          x === "Sebago" ? '#b4b400':
-          x === "Atlas" ? '#663333':
+  return  x === "NEMRC" ? '#FF5252':
+          x === "CAI" ? '#e67e22':
+          x === "CTI" ? '#f1c40f':
+          x === "VHB" ? '#1abc9c':
+          x === "SGC" ? '#3F51B5':
+          x === "Russell Graphics" ? '#ecf0f1':
+          x === "Sebago" ? '#c0392b':
+          x === "Atlas" ? '#3498db':
                        '#4393c3';
 };
 
@@ -147,7 +146,7 @@ title.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info title');
 
-    div.innerHTML = '<a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff">parcel project</a></strong> vendors';
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff">PARCEL PROJECT</a></strong> VENDORS';
 
 	return div;
 

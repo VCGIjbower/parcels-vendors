@@ -1,1 +1,1 @@
-# parcels-rpcs
+# parcels-vendors
