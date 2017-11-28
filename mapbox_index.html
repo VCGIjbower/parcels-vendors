@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Toggling layers</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.42.2/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.42.2/mapbox-gl.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+<style>
+.menu-ui {
+  background:#fff;
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1;
+  border-radius:3px;
+  width:120px;
+  border:1px solid rgba(0,0,0,0.4);
+  }
+  .menu-ui a {
+    font-size:13px;
+    color:#404040;
+    display:block;
+    margin:0;padding:0;
+    padding:10px;
+    text-decoration:none;
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    text-align:center;
+    }
+    .menu-ui a:first-child {
+      border-radius:3px 3px 0 0;
+      }
+    .menu-ui a:last-child {
+      border:none;
+      border-radius:0 0 3px 3px;
+      }
+    .menu-ui a:hover {
+      background:#f8f8f8;
+      color:#404040;
+      }
+    .menu-ui a.active {
+      background:#3887BE;
+      color:#FFF;
+      }
+      .menu-ui a.active:hover {
+        background:#3074a4;
+        }
+</style>
+<nav id='menu-ui' class='menu-ui'></nav>
+<div id='map'></div>
+<script type="text/javascript" src="parcels-towns.js"></script>
+<script type="text/javascript" src="rpcs.js"></script>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibnFwZW5lbG9wZSIsImEiOiJjajMyeXdpZm4wMDFoMzNueXB2ZmM3eWV0In0.eTfm0daHuGvgWHEfw1nzhQ';
+
+var params = {};
+window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+params[key] = value;
+});
+
+var map = mapboxgl.Map({
+  container: 'map',
+  center: [-122.420679, 37.772537],
+  zoom: 13,
+  style: style_object,
+  hash: true,
+  transformRequest: (url, resourceType)=> {
+    if(resourceType == 'Source' && url.startsWith('http://myHost') {
+      return {
+       url: url.replace('http', 'https'),
+       headers: { 'my-custom-header': true},
+       credentials: 'include'  // Include cookies for cross-origin requests
+     }
+    }
+  }
+});
+
+addLayer(L.geoJson(parcels_rpcs, {
+    id: 'Year 2',
+    filter: otherFilter,
+    style: otherstyle
+  }));
+addLayer(L.geoJson(parcels_rpcs, {
+    id: 'Year 1',
+    filter: parcelsFilter,
+    style: style
+  }));
+var rpcs = L.geoJson(rpcs, {
+    style: rpcstyle
+  }).addTo(mymap);
+var parcelspopups = L.geoJson(parcels_rpcs, {
+    style: popupstyle,
+    onEachFeature: function(feature, layer) {
+      if (feature.properties.Participat === "First Year")
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Phase 1 Vendor: </b>'+feature.properties.parcelproject_coverage_Vendor+'<br/><b>Status: </b>Phase 1')
+      else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not currently participating')
+    }
+}).addTo(mymap);
+
+  function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.parcelproject_coverage_Vendor),
+        weight: 1,
+        opacity: 0.7,  
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.7
+    };
+  }
+
+  function getColor(x) {
+    return  x === "NEMRC" ? '#FF5252':
+          x === "CAI" ? '#e67e22':
+          x === "CTI" ? '#f1c40f':
+          x === "VHB" ? '#1abc9c':
+          x === "SGC" ? '#3F51B5':
+          x === "Russell Graphics" ? '#ecf0f1':
+          x === "Sebago" ? '#c0392b':
+          x === "Atlas" ? '#3498db':
+                       '#4393c3';
+  }
+
+  function otherstyle(feature) {
+    return {
+        fillColor: '#000000',
+        weight: 1,
+        opacity: 0.7,
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.6
+    };
+  }
+
+  function rpcstyle(feature) {
+    return {
+        weight: 4,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.0
+    };
+  }
+
+  function popupstyle(feature) {
+    return {
+        weight: 0,
+        fillOpacity: 0.0
+    };
+  }
+
+  function rpcfunction(x){
+    return x === "CC" ? 'Chittenden County RPC':
+                 x === "SW" ? 'Southern Windsor County RPC':
+                 x === "BC" ? 'Bennington County RC':
+                 x === "NW" ? 'Northwest RPC':
+                 x === "LC" ? 'Lamoille County RPC':
+                 x === "NV" ? 'Northeastern Vermont Dev. Assc.':
+                 x === "WR" ? 'Windham RC':
+                 x === "CV" ? 'Central Vermont RPC':
+                 x === "TR" ? 'Two Rivers-Ottauquechee RC':
+                 x === "RR" ? 'Rutland RPC':
+                 x === "AC" ? 'Addison County RPC':
+                              'other';
+  };
+
+  var legend = L.control({position: 'bottomright'});
+
+  legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ["NEMRC", "CAI", "CTI", "VHB", "SGC", "Russell Graphics", "Sebago", "Atlas"];
+    div.innerHTML = '<span style="font-size: 150%">Vendor</span><br><br>'
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+            grades[i] + '<br>';
+    }
+
+    return div;
+
+  };
+
+  var title = L.control({position: 'topright'});
+
+  title.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info title');
+
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff">Parcel Project</a> Participation<br><br>Phase 1';
+
+  return div;
+
+  };
+
+  var logo = L.control({position: 'bottomleft'});
+
+  logo.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info logo');
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/" target="_blank"><img src="images/logo.png" alt="VCGI logo" height="40"></a>'
+    return div;
+  };
+
+  title.addTo(mymap);
+
+  logo.addTo(mymap);
+
+  legend.addTo(mymap);
+
+  function parcelsFilter(feature) {
+    if (feature.properties.Participat === "First Year") return true
+  }
+
+  function otherFilter(feature) {
+    if (feature.properties.Participat === "First Year") return false
+      else return true
+  }
+
+var toggleableLayerIds = [ 'Year 1', 'Year 2' ];
+
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+    var id = toggleableLayerIds[i];
+
+    // Create a simple layer switcher that
+    // toggles layers on and off.
+    var link = document.createElement('a');
+        link.href = '#';
+        link.className = 'active';
+        link.innerHTML = name;
+
+    link.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+            this.className = '';
+        } else {
+            map.addLayer(layer);
+            this.className = 'active';
+        }
+    };
+
+    layers.appendChild(link);
+}
+</script>
+</body>
+</html>
