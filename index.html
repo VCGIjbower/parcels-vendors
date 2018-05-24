@@ -182,7 +182,7 @@ map.on('load', function () {
     };
 
     map.on('click', 'parcels-invisible', function (e) {
-        if (e.features[0].properties.Participat = "First Year")
+        if (e.features[0].properties.Participat === 'First Year')
           new mapboxgl.Popup()
             .setLngLat(e.lngLat)
             .setHTML('<b>Municipality: </b>'+e.features[0].properties.SHORTNAME2+'<br/><b>County: </b>'+e.features[0].properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(e.features[0].properties.RPC2)+'<br/><b>Parcel Project Vendor: </b>'+e.features[0].properties.parcelproj+'<br/><b>Status: </b>'+e.features[0].properties.Participat)
