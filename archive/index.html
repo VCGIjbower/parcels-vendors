@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Year 1 Municipalities</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+   <link rel="stylesheet" type="text/css" href="css/parcels-towns.css">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+   crossorigin=""></script>
+   <script src="https://unpkg.com/esri-leaflet@2.1.1/dist/esri-leaflet.js"
+   integrity="sha512-ECQqaYZke9cSdqlFG08zSkudgrdF6I1d8ViSa7I3VIszJyVqw4ng1G8sehEXlumdMnFYfzY0tMgdQa4WCs9IUw=="
+   crossorigin=""></script>
+   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+   <style>
+    body { margin:0; padding:0; }
+    #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- parcels joined to rpcs and selected phase 1 project information -->
+<script type="text/javascript" src="parcels-towns.js"></script>
+<script type="text/javascript" src="rpcs.js"></script>
+<script>
+
+var params = {};
+window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+  params[key] = value;
+});
+
+var mymap = L.map('map').setView([params.lat || 43.9, params.lng || -72.5], params.zoom || 8);
+
+function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.parcelproject_coverage_Vendor),
+        weight: 1,
+        opacity: 0.7,  
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.7
+    };
+}
+
+function getColor(x) {
+  return  x === "NEMRC" ? '#FF5252':
+          x === "CAI" ? '#e67e22':
+          x === "CTI" ? '#f1c40f':
+          x === "VHB" ? '#1abc9c':
+          x === "SGC" ? '#3F51B5':
+          x === "Russell Graphics" ? '#ecf0f1':
+          x === "Sebago" ? '#c0392b':
+          x === "Atlas" ? '#3498db':
+                       '#4393c3';
+};
+
+function otherstyle(feature) {
+    return {
+        fillColor: '#000000',
+        weight: 1,
+        opacity: 0.7,
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.6
+    };
+}
+
+function rpcstyle(feature) {
+    return {
+        weight: 4,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.0
+    };
+}
+
+function popupstyle(feature) {
+    return {
+        weight: 0,
+        fillOpacity: 0.0
+    };
+}
+
+var otherparcels = L.geoJson(parcels_rpcs, {
+    filter: otherFilter,
+    style: otherstyle
+}).addTo(mymap);
+
+var parcels = L.geoJson(parcels_rpcs, {
+    filter: parcelsFilter,
+    style: style
+}).addTo(mymap);
+
+var rpcs = L.geoJson(rpcs, {
+    style: rpcstyle
+}).addTo(mymap);
+
+function rpcfunction(x){
+      return x === "CC" ? 'Chittenden County RPC':
+                 x === "SW" ? 'Southern Windsor County RPC':
+                 x === "BC" ? 'Bennington County RC':
+                 x === "NW" ? 'Northwest RPC':
+                 x === "LC" ? 'Lamoille County RPC':
+                 x === "NV" ? 'Northeastern Vermont Dev. Assc.':
+                 x === "WR" ? 'Windham RC':
+                 x === "CV" ? 'Central Vermont RPC':
+                 x === "TR" ? 'Two Rivers-Ottauquechee RC':
+                 x === "RR" ? 'Rutland RPC':
+                 x === "AC" ? 'Addison County RPC':
+                              'other';
+};
+
+var parcelspopups = L.geoJson(parcels_rpcs, {
+    style: popupstyle,
+    onEachFeature: function(feature, layer) {
+      if (feature.properties.Participat === "First Year")
+        layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Phase 1 Vendor: </b>'+feature.properties.parcelproject_coverage_Vendor+'<br/><b>Status: </b>Phase 1')
+      else layer.bindPopup('<b>Municipality: </b>'+feature.properties.SHORTNAME2+'<br/><b>County: </b>'+feature.properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(feature.properties.RPC2)+'<br/><b>Status: </b>Not currently participating')
+    }
+}).addTo(mymap);
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ["NEMRC", "CAI", "CTI", "VHB", "SGC", "Russell Graphics", "Sebago", "Atlas"];
+    div.innerHTML = '<span style="font-size: 150%">Vendor</span><br><br>'
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+            grades[i] + '<br>';
+    }
+
+    return div;
+
+};
+
+legend.addTo(mymap);
+
+var title = L.control({position: 'topright'});
+
+title.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info title');
+
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/data/parcels/overview" target="_blank" style="color: #fff">Parcel Project</a> Participation<br><br>Phase 1';
+
+	return div;
+
+};
+
+var logo = L.control({position: 'bottomleft'});
+
+logo.onAdd = function (map) {
+
+	var div = L.DomUtil.create('div', 'info logo');
+
+    div.innerHTML = '<a href="http://vcgi.vermont.gov/" target="_blank"><img src="images/logo.png" alt="VCGI logo" height="40"></a>'
+
+	return div;
+
+};
+
+logo.addTo(mymap);
+
+title.addTo(mymap);
+
+function parcelsFilter(feature) {
+  if (feature.properties.Participat === "First Year") return true
+}
+
+function otherFilter(feature) {
+  if (feature.properties.Participat === "First Year") return false
+    else return true
+}
+
+</script>
+</body>
+</html>

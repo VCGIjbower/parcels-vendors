@@ -1,0 +1,10 @@
+    var div = document.createElement('div')
+    var grades = ["NEMRC", "CAI", "CTI", "VHB", "SGC", "Russell Graphics", "Sebago", "Atlas"];
+    div.innerHTML = '<span class="legend-key" style="font-size: 150%">Vendor</span><br><br>'
+    for (i = 0; i < grades.length; i++) {
+      div.innerHTML +=
+      '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+      grades[i] + '<br>';
+    }
+    return div;
+    map.addControl(div, 'bottom-right')
