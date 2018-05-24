@@ -62,7 +62,7 @@
         color: #000;
         position: absolute;
         bottom: 5px;
-        right: 5px;
+        right: 10px;
         padding: 5px;
         line-height: 20px;
         height: 60px;
@@ -81,11 +81,16 @@
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoibnFwZW5lbG9wZSIsImEiOiJjajMyeXdpZm4wMDFoMzNueXB2ZmM3eWV0In0.eTfm0daHuGvgWHEfw1nzhQ';
 
+var params = {};
+window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+  params[key] = value;
+});
+
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/nqpenelope/cjak0ipwxbawy2snwv26bz2vf',
-    zoom: 7,
-    center: [-72.4, 43.9]
+    center: [params.lat || -72.4, params.lng || 43.9],
+    zoom: params.zoom || 7
 });
 
 map.on('load', function () {
@@ -177,7 +182,7 @@ map.on('load', function () {
     };
 
     map.on('click', 'parcels-invisible', function (e) {
-        if (e.features[0].properties.Participat === "First Year")
+        if (e.features[0].properties.Participat = "First Year")
           new mapboxgl.Popup()
             .setLngLat(e.lngLat)
             .setHTML('<b>Municipality: </b>'+e.features[0].properties.SHORTNAME2+'<br/><b>County: </b>'+e.features[0].properties.COUNTY2+'<br/><b>RPC: </b>'+rpcfunction(e.features[0].properties.RPC2)+'<br/><b>Parcel Project Vendor: </b>'+e.features[0].properties.parcelproj+'<br/><b>Status: </b>'+e.features[0].properties.Participat)
